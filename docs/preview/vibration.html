@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=430, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+  <title>挪车提醒 · 震动提醒</title>
+</head>
+<body>
+<div class="alert-screen">
+  <div class="alert-glow"></div>
+  <div class="alert-status">
+    <span>14:33</span>
+    <div class="status-right">
+      <div class="signal"><i></i><i></i><i></i></div>
+      <div class="battery"></div>
+    </div>
+  </div>
+
+  <div class="alert-inner">
+    <div class="alert-icon">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99ZM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16Zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5ZM5 11l1.5-4.5h11L19 11H5Z" fill="#FBBF24"/>
+      </svg>
+    </div>
+
+    <div class="alert-label">挪 车 提 醒</div>
+    <div class="alert-headline">请确认挪车</div>
+    <div class="alert-time">收到于 2026-11-22 14:32:10</div>
+
+    <div class="alert-keywords">交警 · 违停 · 汽车</div>
+    <div class="alert-sender">发送方：12123</div>
+
+    <div class="message-card">
+      <div class="message-label">短信内容</div>
+      <div class="message-body">【交警】您的汽车涉嫌违停，请立即挪车。如有疑问请忽略本短信。</div>
+    </div>
+
+    <div class="alert-countdown">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7Z" fill="#D8BCAC"/>
+      </svg>
+      <span><b>42 秒</b>后升级为闹钟</span>
+    </div>
+
+    <div class="alert-actions">
+      <div class="primary-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17Z" fill="#2A1506"/>
+        </svg>
+        我已挪车
+      </div>
+      <div class="secondary-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7Z" fill="#FFF7ED"/>
+        </svg>
+        5 分钟后再提醒
+      </div>
+      <div class="tertiary-btn">停止震动</div>
+    </div>
+
+    <div class="alert-footer">锁屏也会提醒 · 返回键不会关闭</div>
+  </div>
+</div>
+</body>
+</html>

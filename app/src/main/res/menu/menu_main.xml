@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_oem"
+        android:title="@string/oem_dialog_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_guide"
+        android:title="@string/guide_title"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_reset_keywords"
+        android:title="@string/reset_keywords"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/about_title"
+        app:showAsAction="never" />
+</menu>

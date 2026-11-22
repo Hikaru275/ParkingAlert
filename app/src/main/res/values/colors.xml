@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0F766E</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryContainer">#CCFBF1</color>
+    <color name="colorOnPrimaryContainer">#042F2E</color>
+    <color name="colorSecondary">#B45309</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorSecondaryContainer">#FEF3C7</color>
+    <color name="colorOnSecondaryContainer">#451A03</color>
+    <color name="colorTertiary">#1D4ED8</color>
+    <color name="colorOnTertiary">#FFFFFF</color>
+    <color name="colorTertiaryContainer">#DBEAFE</color>
+    <color name="colorOnTertiaryContainer">#172554</color>
+    <color name="colorError">#B91C1C</color>
+    <color name="colorOnError">#FFFFFF</color>
+    <color name="colorErrorContainer">#FEE2E2</color>
+    <color name="colorOnErrorContainer">#450A0A</color>
+
+    <color name="colorBackground">#F4F7F6</color>
+    <color name="colorOnBackground">#17211F</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#17211F</color>
+    <color name="colorSurfaceVariant">#E6ECEA</color>
+    <color name="colorOnSurfaceVariant">#4B5B57</color>
+    <color name="colorOutline">#7C8C88</color>
+    <color name="colorOutlineVariant">#C9D4D0</color>
+    <color name="colorSurfaceContainer">#EDF2F0</color>
+
+    <color name="statusGreen">#15803D</color>
+    <color name="statusGreenContainer">#DCFCE7</color>
+    <color name="statusAmber">#B45309</color>
+    <color name="statusAmberContainer">#FEF3C7</color>
+    <color name="statusRed">#B91C1C</color>
+    <color name="statusRedContainer">#FEE2E2</color>
+    <color name="statusBlue">#1D4ED8</color>
+    <color name="statusBlueContainer">#DBEAFE</color>
+    <color name="statusGray">#52605C</color>
+    <color name="statusGrayContainer">#E6ECEA</color>
+
+    <color name="alertBackgroundStart">#160F0C</color>
+    <color name="alertBackgroundEnd">#2E130B</color>
+    <color name="alertAccent">#FBBF24</color>
+    <color name="alertAccentDark">#B45309</color>
+    <color name="alertText">#FFF7ED</color>
+    <color name="alertMuted">#D8BCAC</color>
+    <color name="alertCard">#33FFFFFF</color>
+    <color name="alertCardStroke">#40FFFFFF</color>
+    <color name="alertButtonText">#2A1506</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>
