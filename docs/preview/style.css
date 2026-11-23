@@ -149,6 +149,11 @@ body {
   box-shadow: 0 8px 26px rgba(15, 118, 110, 0.20);
 }
 
+.hero.off {
+  background: linear-gradient(135deg, #7c2d12 0%, #431407 100%);
+  box-shadow: 0 8px 26px rgba(124, 45, 18, 0.20);
+}
+
 .hero::before {
   content: "";
   position: absolute;

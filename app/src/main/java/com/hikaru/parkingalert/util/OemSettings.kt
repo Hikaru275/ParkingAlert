@@ -15,6 +15,18 @@ import java.util.Locale
  */
 object OemSettings {
 
+    /**
+     * Autostart/background-popup switches are vendor-specific. These manufacturers are
+     * known to expose one and benefit from the extra prompt.
+     */
+    fun needsAutostartGuide(context: Context): Boolean {
+        val manufacturer = Build.MANUFACTURER.lowercase(Locale.ROOT)
+        return listOf(
+            "xiaomi", "redmi", "huawei", "honor", "oppo", "oneplus",
+            "realme", "vivo", "iqoo", "meizu", "samsung",
+        ).any { manufacturer.contains(it) }
+    }
+
     fun openAutoStart(context: Context): Boolean {
         val manufacturer = Build.MANUFACTURER.lowercase(Locale.ROOT)
         val candidates = when {

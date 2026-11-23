@@ -5,6 +5,11 @@
 
     <string name="status_watching">守卫中</string>
     <string name="status_waiting">待设置</string>
+    <string name="status_guard_off">守卫已关闭</string>
+    <string name="status_guard_off_detail">后台守护已关闭，短信监听仍可用</string>
+    <string name="status_guard_off_missing">后台守护已关闭，另有 %1$d 项设置待完善</string>
+    <string name="status_guard_off_no_sms">后台守护已关闭，且缺少短信权限</string>
+    <string name="status_guard_off_no_notification">后台守护已关闭，且缺少通知权限</string>
     <string name="status_ready_detail">短信守卫中 · 一切正常</string>
     <string name="status_partial_detail">已能监听，建议补全下方设置</string>
     <string name="status_need_sms">还差一步：允许读取短信</string>
@@ -15,6 +20,7 @@
     <string name="permission_card_summary">还差 %1$d 项</string>
 
     <string name="guardian_title">后台守护</string>
+    <string name="guardian_label_off">点击开启</string>
     <string name="guardian_desc">常驻一条低优先级通知，提升被系统冻结后的存活率</string>
     <string name="guardian_started">后台守护已开启</string>
     <string name="guardian_stopped">后台守护已关闭</string>
@@ -35,6 +41,11 @@
     <string name="permission_battery_desc">避免息屏后 App 被系统冻结</string>
     <string name="permission_autostart">自启动 / 后台弹出</string>
     <string name="permission_autostart_desc">小米、华为、OPPO、vivo 等需手动允许</string>
+    <string name="permission_autostart_status">去设置</string>
+    <string name="autostart_confirm_title">自启动已开启？</string>
+    <string name="autostart_confirm_body">如果已在系统设置中允许“自启动 / 后台弹出界面”，请点“已开启”，首页将不再提示。\n\n不同机型的入口名称可能略有不同。</string>
+    <string name="autostart_confirm_done">已开启</string>
+    <string name="autostart_marked">已记录自启动设置</string>
     <string name="permission_granted">已开启</string>
     <string name="permission_missing">未开启</string>
     <string name="permission_recommend">建议开启</string>
@@ -145,6 +156,12 @@
     <string name="notification_channel_fallback_desc">系统限制前台服务时使用的备用响铃通知</string>
     <string name="notification_channel_status">状态通知</string>
     <string name="notification_channel_status_desc">稍后提醒、错过提醒等低频通知</string>
+    <string name="notification_channel_permission">权限提醒</string>
+    <string name="notification_channel_permission_desc">每天 9:00 / 18:00 权限检查时使用</string>
+    <string name="permission_reminder_title">挪车提醒需要设置</string>
+    <string name="permission_reminder_text">未开启：%1$s</string>
+    <string name="permission_reminder_big">为了正常接收违停提醒，请打开 App 完成以下设置：\n%1$s</string>
+    <string name="go_settings">去设置</string>
     <string name="notification_channel_guardian">后台守护</string>
     <string name="notification_channel_guardian_desc">保持短信监听活跃的常驻通知</string>
 
@@ -169,7 +186,7 @@
     <string name="notification_missed_text">点击查看短信内容</string>
     <string name="notification_restored_title">挪车提醒已恢复</string>
     <string name="notification_restored_text">将在 %1$s 继续提醒</string>
-    <string name="notification_guardian_title">挪车提醒守护中</string>
+    <string name="notification_guardian_title">挪车提醒守卫中</string>
     <string name="notification_guardian_text">正在监听违停短信，点击查看设置</string>
     <string name="notification_busy_title">又收到一条挪车提醒</string>
     <string name="notification_busy_text">当前提醒尚未处理，这条短信已记入历史</string>
@@ -177,9 +194,9 @@
     <string name="notification_silenced_text">闹钟已停止，请记得处理并确认</string>
 
     <string name="guide_title">使用说明</string>
-    <string name="guide_body">按下面顺序设置，5 分钟即可用起来：\n\n1. 允许“短信读取”和“通知”权限。\n2. 在“完善运行设置”里开启“精确闹钟”和“全屏提醒”。\n3. 将 App 加入电池优化白名单。\n4. 小米 / 华为 / 荣耀 / OPPO / vivo 等机型，再到系统设置中允许“自启动”“后台弹出界面”“锁屏显示”。\n5. 回到 App，点“测试一次提醒”，确认三段提醒都能正常触发。\n6. 建议在最近任务里锁定本 App，并关闭它的省电限制。\n\n提醒方式默认是“渐进提醒”：短信命中后先出横幅和短铃，1 分钟后升级为震动，再 1 分钟后升级为全屏闹钟。已开启的权限会自动从首页隐藏。\n\n本 App 不是默认短信应用，仅在你自己的手机上侧载使用；不要安装来源不明的改包版本。</string>
+    <string name="guide_body">按下面顺序设置，5 分钟即可用起来：\n\n1. 允许“短信读取”和“通知”权限。\n2. 在“完善运行设置”里开启“精确闹钟”和“全屏提醒”。\n3. 将 App 加入电池优化白名单。\n4. 小米 / 华为 / 荣耀 / OPPO / vivo 等机型，到“设置后台权限”里允许“自启动”“后台弹出界面”“锁屏显示”；返回 App 后点“已开启”。\n5. 回到 App，点“测试一次提醒”，确认三段提醒都能正常触发。\n6. App 每天 9:00 / 18:00 会自动检查权限，有缺失会通知；建议在最近任务里锁定本 App，并关闭它的省电限制。\n\n提醒方式默认是“渐进提醒”：短信命中后先出横幅和短铃，1 分钟后升级为震动，再 1 分钟后升级为全屏闹钟。已开启的权限会自动从首页隐藏。\n\n本 App 不是默认短信应用，仅在你自己的手机上侧载使用；不要安装来源不明的改包版本。</string>
     <string name="about_title">关于</string>
-    <string name="about_body">挪车提醒 v%1$s\n\n一个只在本地运行的违停短信提醒工具：\n• 后台监听短信，按自定义关键词匹配；\n• 命中后先轻提醒，1 分钟未处理升级为震动，再 1 分钟升级为全屏闹钟；\n• 闹钟默认使用系统闹钟铃声；\n• 支持“我已挪车”“停止震动/静音”和“5 分钟后再提醒”；\n• 不申请联网权限，短信与记录只保存在本机。\n\n限制：无法保证 100%% 送达。系统省电策略、短信被拦截、App 被强行停止、闹钟音量为 0 等情况都可能导致漏报。请把它当作辅助提醒，不要完全依赖。\n\n“电话提醒”没有加入：Android 不允许第三方 App 自动拨号后向用户播报内容，只能做模拟来电界面，对办公室场景反而更打扰。</string>
+    <string name="about_body">挪车提醒 v%1$s\n\n一个只在本地运行的违停短信提醒工具：\n• 后台监听短信，按自定义关键词匹配；\n• 命中后先轻提醒，1 分钟未处理升级为震动，再 1 分钟升级为全屏闹钟；\n• 闹钟默认使用系统闹钟铃声；\n• 支持“我已挪车”“停止震动/静音”和“5 分钟后再提醒”；\n• 每天 9:00 / 18:00 自动检查权限；\n• 不申请联网权限，短信与记录只保存在本机。\n\n项目主页：github.com/Hikaru275/ParkingAlert\n开源许可：MIT License\n\n限制：无法保证 100%% 送达。系统省电策略、短信被拦截、App 被强行停止、闹钟音量为 0 等情况都可能导致漏报。请把它当作辅助提醒，不要完全依赖。\n\n“电话提醒”没有加入：Android 不允许第三方 App 自动拨号后向用户播报内容，只能做模拟来电界面，对办公室场景反而更打扰。</string>
     <string name="version_name">版本 %1$s</string>
 
     <string name="oem_dialog_title">设置后台权限</string>

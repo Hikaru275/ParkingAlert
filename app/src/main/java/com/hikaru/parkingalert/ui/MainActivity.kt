@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.hikaru.parkingalert.BuildConfig
 import com.hikaru.parkingalert.R
 import com.hikaru.parkingalert.alert.AlertCoordinator
+import com.hikaru.parkingalert.alert.PermissionCheckScheduler
 import com.hikaru.parkingalert.data.AlertMode
 import com.hikaru.parkingalert.data.AlertRecord
 import com.hikaru.parkingalert.data.AlertStatus
@@ -40,6 +41,8 @@ import com.hikaru.parkingalert.service.GuardianService
 import com.hikaru.parkingalert.sms.KeywordMatcher
 import com.hikaru.parkingalert.util.NotificationHelper
 import com.hikaru.parkingalert.util.OemSettings
+import com.hikaru.parkingalert.util.PermissionAudit
+import com.hikaru.parkingalert.util.PermissionKey
 import com.hikaru.parkingalert.util.PermissionUtils
 import com.hikaru.parkingalert.util.TimeFormat
 
@@ -48,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var suppressListeners = false
     private var enableDndAfterSettings = false
+    private var awaitingAutostartConfirm = false
     private var showAllHistory = false
 
     private val permissionLauncher = registerForActivityResult(
@@ -120,6 +124,10 @@ class MainActivity : AppCompatActivity() {
         if (!::binding.isInitialized) return
         syncGuardianService()
         refreshAll()
+        PermissionCheckScheduler.schedule(this)
+        if (PermissionAudit.missing(this).isEmpty()) {
+            NotificationHelper.cancelPermissionReminder(this)
+        }
         if (enableDndAfterSettings) {
             enableDndAfterSettings = false
             if (PermissionUtils.hasDndAccess(this)) {
@@ -128,6 +136,12 @@ class MainActivity : AppCompatActivity() {
                 NotificationHelper.refreshChannels(this)
             } else {
                 snackbar(getString(R.string.dnd_not_granted))
+            }
+        }
+        if (awaitingAutostartConfirm) {
+            awaitingAutostartConfirm = false
+            if (!AppPrefs.autostartConfirmed(this)) {
+                showAutostartConfirmDialog()
             }
         }
     }
@@ -289,95 +303,68 @@ class MainActivity : AppCompatActivity() {
     private fun refreshStatus() {
         val sms = PermissionUtils.hasSms(this)
         val notification = PermissionUtils.hasNotificationPermission(this)
-        val exact = PermissionUtils.canScheduleExactAlarms(this)
-        val fullScreen = PermissionUtils.canUseFullScreenIntent(this)
-        val battery = PermissionUtils.isIgnoringBatteryOptimizations(this)
-        val missingCount = listOf(sms, notification, exact, fullScreen, battery).count { !it }
-
+        val missing = PermissionAudit.missing(this)
+        val missingCount = missing.size
+        val guardianOn = AppPrefs.guardianEnabled(this)
         val operational = sms && notification
-        binding.statusTitle.setText(
-            if (operational) R.string.status_watching else R.string.status_waiting
-        )
+
+        val titleRes = when {
+            !guardianOn -> R.string.status_guard_off
+            operational -> R.string.status_watching
+            else -> R.string.status_waiting
+        }
+        binding.statusTitle.setText(titleRes)
+
         binding.statusSubtitle.text = when {
+            !guardianOn && !sms -> getString(R.string.status_guard_off_no_sms)
+            !guardianOn && !notification -> getString(R.string.status_guard_off_no_notification)
+            !guardianOn && missingCount > 0 -> getString(R.string.status_guard_off_missing, missingCount)
+            !guardianOn -> getString(R.string.status_guard_off_detail)
             !sms -> getString(R.string.status_need_sms_detail)
             !notification -> getString(R.string.status_need_notification_detail)
             missingCount > 0 -> getString(R.string.hero_missing_detail, missingCount)
             else -> getString(R.string.status_ready_detail)
         }
 
+        binding.heroCard.setBackgroundResource(
+            if (guardianOn) R.drawable.bg_hero else R.drawable.bg_hero_off
+        )
+        binding.statusIcon.setImageResource(
+            if (guardianOn) R.drawable.ic_shield_check else R.drawable.ic_shield_guard_off
+        )
+        binding.guardianLabel.setText(
+            if (guardianOn) R.string.guardian_title else R.string.guardian_label_off
+        )
+
         suppressListeners = true
-        binding.guardianSwitch.isChecked = AppPrefs.guardianEnabled(this)
+        binding.guardianSwitch.isChecked = guardianOn
         suppressListeners = false
     }
 
     private fun refreshPermissions() {
-        val sms = PermissionUtils.hasSms(this)
-        val notification = PermissionUtils.hasNotificationPermission(this)
-        val exact = PermissionUtils.canScheduleExactAlarms(this)
-        val fullScreen = PermissionUtils.canUseFullScreenIntent(this)
-        val battery = PermissionUtils.isIgnoringBatteryOptimizations(this)
-
-        val rows = buildList {
-            if (!sms) {
-                add(
-                    PermissionRow(
-                        icon = R.drawable.ic_sms,
-                        title = R.string.permission_sms,
-                        description = R.string.permission_sms_desc,
-                        status = R.string.permission_missing,
-                        statusColor = R.color.statusRed,
-                        onClick = { requestSmsPermission() },
-                    )
-                )
-            }
-            if (!notification) {
-                add(
-                    PermissionRow(
-                        icon = R.drawable.ic_bell,
-                        title = R.string.permission_notification,
-                        description = R.string.permission_notification_desc,
-                        status = R.string.permission_missing,
-                        statusColor = R.color.statusRed,
-                        onClick = { requestNotificationPermissionOrOpenSettings() },
-                    )
-                )
-            }
-            if (!exact) {
-                add(
-                    PermissionRow(
-                        icon = R.drawable.ic_alarm,
-                        title = R.string.permission_exact_alarm,
-                        description = R.string.permission_exact_alarm_desc,
-                        status = R.string.permission_recommend,
-                        statusColor = R.color.statusAmber,
-                        onClick = { showExactAlarmDialog() },
-                    )
-                )
-            }
-            if (!fullScreen) {
-                add(
-                    PermissionRow(
-                        icon = R.drawable.ic_fullscreen,
-                        title = R.string.permission_fullscreen,
-                        description = R.string.permission_fullscreen_desc,
-                        status = R.string.permission_recommend,
-                        statusColor = R.color.statusAmber,
-                        onClick = { showFullScreenDialog() },
-                    )
-                )
-            }
-            if (!battery) {
-                add(
-                    PermissionRow(
-                        icon = R.drawable.ic_battery,
-                        title = R.string.permission_battery,
-                        description = R.string.permission_battery_desc,
-                        status = R.string.permission_recommend,
-                        statusColor = R.color.statusAmber,
-                        onClick = { showBatteryDialog() },
-                    )
-                )
-            }
+        val rows = PermissionAudit.missing(this).map { missing ->
+            PermissionRow(
+                icon = permissionIcon(missing.key),
+                title = missing.title,
+                description = missing.description,
+                status = if (missing.key == PermissionKey.AUTOSTART) {
+                    R.string.permission_autostart_status
+                } else if (missing.key == PermissionKey.SMS ||
+                    missing.key == PermissionKey.NOTIFICATION
+                ) {
+                    R.string.permission_missing
+                } else {
+                    R.string.permission_recommend
+                },
+                statusColor = if (missing.key == PermissionKey.SMS ||
+                    missing.key == PermissionKey.NOTIFICATION
+                ) {
+                    R.color.statusRed
+                } else {
+                    R.color.statusAmber
+                },
+                onClick = { handlePermissionAction(missing.key) },
+            )
         }
 
         binding.permissionContainer.removeAllViews()
@@ -413,24 +400,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun permissionIcon(key: PermissionKey): Int = when (key) {
+        PermissionKey.SMS -> R.drawable.ic_sms
+        PermissionKey.NOTIFICATION -> R.drawable.ic_bell
+        PermissionKey.EXACT_ALARM -> R.drawable.ic_alarm
+        PermissionKey.FULL_SCREEN -> R.drawable.ic_fullscreen
+        PermissionKey.BATTERY -> R.drawable.ic_battery
+        PermissionKey.AUTOSTART -> R.drawable.ic_power
+    }
+
+    private fun handlePermissionAction(key: PermissionKey) {
+        when (key) {
+            PermissionKey.SMS -> requestSmsPermission()
+            PermissionKey.NOTIFICATION -> requestNotificationPermissionOrOpenSettings()
+            PermissionKey.EXACT_ALARM -> showExactAlarmDialog()
+            PermissionKey.FULL_SCREEN -> showFullScreenDialog()
+            PermissionKey.BATTERY -> showBatteryDialog()
+            PermissionKey.AUTOSTART -> showOemDialog()
+        }
+    }
+
     private fun checkNextPermission() {
-        if (!PermissionUtils.hasSms(this) || !PermissionUtils.hasNotificationPermission(this)) {
-            requestCorePermissions()
-            return
+        when (PermissionAudit.missing(this).firstOrNull()?.key) {
+            null -> snackbar(getString(R.string.permission_ready))
+            PermissionKey.SMS, PermissionKey.NOTIFICATION -> requestCorePermissions()
+            PermissionKey.EXACT_ALARM -> showExactAlarmDialog()
+            PermissionKey.FULL_SCREEN -> showFullScreenDialog()
+            PermissionKey.BATTERY -> showBatteryDialog()
+            PermissionKey.AUTOSTART -> showOemDialog()
         }
-        if (!PermissionUtils.canScheduleExactAlarms(this)) {
-            showExactAlarmDialog()
-            return
-        }
-        if (!PermissionUtils.canUseFullScreenIntent(this)) {
-            showFullScreenDialog()
-            return
-        }
-        if (!PermissionUtils.isIgnoringBatteryOptimizations(this)) {
-            showBatteryDialog()
-            return
-        }
-        snackbar(getString(R.string.permission_ready))
     }
 
     private fun requestCorePermissions() {
@@ -592,15 +590,36 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.oem_dialog_title)
             .setMessage(R.string.oem_dialog_body)
             .setPositiveButton(R.string.open_autostart) { _, _ ->
-                if (!OemSettings.openAutoStart(this)) {
+                awaitingAutostartConfirm = OemSettings.openAutoStart(this)
+                if (!awaitingAutostartConfirm) {
                     snackbar(getString(R.string.settings_not_found))
                 }
             }
-            .setNeutralButton(R.string.open_app_settings) { _, _ ->
-                OemSettings.openAppDetails(this)
+            .setNeutralButton(R.string.autostart_confirm_done) { _, _ ->
+                markAutostartConfirmed()
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
+    }
+
+    private fun showAutostartConfirmDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.autostart_confirm_title)
+            .setMessage(R.string.autostart_confirm_body)
+            .setPositiveButton(R.string.autostart_confirm_done) { _, _ ->
+                markAutostartConfirmed()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun markAutostartConfirmed() {
+        AppPrefs.setAutostartConfirmed(this, true)
+        refreshAll()
+        if (PermissionAudit.missing(this).isEmpty()) {
+            NotificationHelper.cancelPermissionReminder(this)
+        }
+        snackbar(getString(R.string.autostart_marked))
     }
 
     private fun setDndSwitchChecked(checked: Boolean) {

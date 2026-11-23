@@ -20,6 +20,15 @@ class BootReceiver : BroadcastReceiver() {
                 }
                 AlertCoordinator.restoreAfterBoot(context)
             }
+
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            -> Unit
+
+            else -> return
         }
+
+        // Keep the 09:00 / 18:00 audit aligned with the current time zone.
+        PermissionCheckScheduler.schedule(context)
     }
 }

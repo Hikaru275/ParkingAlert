@@ -27,6 +27,7 @@ object NotificationHelper {
     const val CHANNEL_FALLBACK = "alarm_fallback"
     const val CHANNEL_STATUS = "status"
     const val CHANNEL_GUARDIAN = "guardian"
+    const val CHANNEL_PERMISSION = "permission"
 
     const val ID_GENTLE = 1001
     const val ID_ALARM = 1002
@@ -38,6 +39,7 @@ object NotificationHelper {
     const val ID_CANCELLED = 1008
     const val ID_VIBRATE = 1009
     const val ID_VIBRATE_ENDED = 1010
+    const val ID_PERMISSION = 1011
     const val ID_GUARDIAN = 1100
 
     private const val REQUEST_FULLSCREEN = 10
@@ -55,6 +57,7 @@ object NotificationHelper {
         createIfMissing(manager, gentleChannel(context))
         createIfMissing(manager, alarmChannel(context))
         createIfMissing(manager, fallbackChannel(context))
+        createIfMissing(manager, permissionChannel(context))
     }
 
     /**
@@ -149,6 +152,22 @@ object NotificationHelper {
         vibrationPattern = longArrayOf(0L, 600L, 250L, 600L, 250L, 900L)
         lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         setBypassDndSafely(context, this)
+    }
+
+    private fun permissionChannel(context: Context) = NotificationChannel(
+        CHANNEL_PERMISSION,
+        context.getString(R.string.notification_channel_permission),
+        NotificationManager.IMPORTANCE_HIGH,
+    ).apply {
+        description = context.getString(R.string.notification_channel_permission_desc)
+        setShowBadge(true)
+        val attributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+        setSound(soundUri(context, R.raw.gentle_chime), attributes)
+        enableVibration(false)
+        lockscreenVisibility = Notification.VISIBILITY_PUBLIC
     }
 
     private fun setBypassDndSafely(context: Context, channel: NotificationChannel) {
@@ -411,6 +430,26 @@ object NotificationHelper {
             )
             .build()
 
+    fun buildPermissionReminder(context: Context, missing: List<String>): Notification {
+        val body = missing.joinToString("、")
+        return NotificationCompat.Builder(context, CHANNEL_PERMISSION)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(ContextCompat.getColor(context, R.color.statusAmber))
+            .setContentTitle(context.getString(R.string.permission_reminder_title))
+            .setContentText(context.getString(R.string.permission_reminder_text, body))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(context.getString(R.string.permission_reminder_big, body))
+            )
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setAutoCancel(true)
+            .setContentIntent(mainIntent(context))
+            .addAction(0, context.getString(R.string.go_settings), mainIntent(context))
+            .build()
+    }
+
     fun buildGuardian(context: Context): Notification =
         NotificationCompat.Builder(context, CHANNEL_GUARDIAN)
             .setSmallIcon(R.drawable.ic_notification)
@@ -481,6 +520,13 @@ object NotificationHelper {
     fun showMissed(context: Context) {
         notify(context, ID_MISSED, buildMissed(context))
     }
+
+    fun showPermissionReminder(context: Context, missing: List<String>) {
+        if (missing.isEmpty()) return
+        notify(context, ID_PERMISSION, buildPermissionReminder(context, missing))
+    }
+
+    fun cancelPermissionReminder(context: Context) = cancel(context, ID_PERMISSION)
 
     fun showRestored(context: Context, alert: PendingAlert, triggerAt: Long) {
         cancelAlertSurfaces(context)

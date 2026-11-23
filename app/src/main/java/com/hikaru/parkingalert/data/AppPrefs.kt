@@ -32,6 +32,7 @@ object AppPrefs {
     private const val KEY_VIBRATE = "vibrate"
     private const val KEY_DND = "bypass_dnd"
     private const val KEY_GUARDIAN = "guardian_enabled"
+    private const val KEY_AUTOSTART = "autostart_confirmed"
     private const val KEY_SAVE_HISTORY = "save_history"
     private const val KEY_HISTORY = "history"
     private const val KEY_PENDING = "pending_alert"
@@ -125,6 +126,17 @@ object AppPrefs {
 
     fun setGuardianEnabled(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_GUARDIAN, enabled).apply()
+    }
+
+    /**
+     * Android has no public API to read the OEM autostart switch, so the user confirms
+     * it once after returning from the vendor settings page.
+     */
+    fun autostartConfirmed(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_AUTOSTART, false)
+
+    fun setAutostartConfirmed(context: Context, confirmed: Boolean) {
+        prefs(context).edit().putBoolean(KEY_AUTOSTART, confirmed).apply()
     }
 
     fun saveHistory(context: Context): Boolean = prefs(context).getBoolean(KEY_SAVE_HISTORY, true)

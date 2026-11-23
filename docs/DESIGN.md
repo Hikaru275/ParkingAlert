@@ -58,9 +58,12 @@
 | `AlertScheduler` | 用 `AlarmManager.setAlarmClock` 调度升级；无精确闹钟权限时降级为不精确闹钟 |
 | `AlertService` | 分阶段前台服务：`specialUse` 震动阶段、`mediaPlayback` 闹钟阶段；播放系统闹钟铃声、渐强、震动、唤醒锁 |
 | `AlertActivity` | 全屏提醒页；锁屏显示、亮屏、阶段倒计时、确认/稍后/停止震动或静音 |
-| `NotificationHelper` | 通知频道、轻提醒/震动/闹钟通知、通知按钮 PendingIntent |
+| `NotificationHelper` | 通知频道、轻提醒/震动/闹钟/权限巡检通知、通知按钮 PendingIntent |
+| `PermissionAudit` | 统一计算缺失的权限/自启动确认项，首页和每日巡检共用 |
+| `PermissionCheckScheduler` | 计算并调度 09:00 / 18:00 的权限巡检 |
+| `PermissionCheckReceiver` | 巡检权限、发提醒、重排下一次巡检、尝试恢复后台守护 |
 | `GuardianService` | 可选 `specialUse` 前台服务，提高进程存活率 |
-| `AppPrefs` | SharedPreferences + JSON；关键词、设置、待处理提醒、历史 |
+| `AppPrefs` | SharedPreferences + JSON；关键词、设置、自启动确认、待处理提醒、历史 |
 | `MainActivity` | 只展示缺失权限、关键词、提醒设置、最近 3 条历史、测试 |
 
 ## 3. 提醒状态机
@@ -145,7 +148,17 @@
 - 历史默认只展示 3 条，点“查看全部”展开，避免首页过长。
 - 提醒方式用三枚分段按钮代替单选框，减少视觉噪音；等待时间固定为 1 分钟，不再提供滑杆。
 
-### 4.4 为什么不用系统闹钟 / 电话
+### 4.4 权限巡检与自启动
+
+- `PermissionAudit` 统一判断短信、通知、精确闹钟、全屏提醒、电池白名单和自启动确认。
+- `PermissionCheckScheduler` 在每天 09:00 / 18:00 调度一次巡检；优先使用 `setExactAndAllowWhileIdle`，没有精确闹钟权限时降级为不精确闹钟。
+- 巡检完成后由 `PermissionCheckReceiver` 重排下一次；时区/时间变化和开机时由 `BootReceiver` 重排。
+- 有缺失时发“挪车提醒需要设置”通知；全部满足时取消旧提醒。
+- 自启动没有公开读取 API，因此采用“打开厂商设置 → 返回后确认已开启”的本地确认流程，确认结果只存储在本机。
+- 关闭后台守护时，首页 Hero 从青绿色切换为棕褐色，显示“守卫已关闭”，开关下方显示“点击开启”，从视觉上明确区分。
+- 巡检时会尝试重新启动用户已开启的后台守护服务；若被系统限制则静默失败。
+
+### 4.5 为什么不用系统闹钟 / 电话
 
 - 系统时钟 App 没有对外 API 让三方 App“立即响铃”。`AlarmClock.ACTION_SET_ALARM` 只能打开时钟 App 的创建界面，并且是未来时间。
 - 本 App 用 `AlarmManager.setAlarmClock()` 实现“系统级精确闹钟”的调度语义（系统会显示闹钟图标、可在 Doze 下准时触发），但响铃由自己的前台服务播放系统默认闹钟铃声。
@@ -247,6 +260,7 @@ Manifest 中没有 `INTERNET` 权限，代码中没有网络调用。
 
 - `KeywordMatcherTest`：9 个用例，覆盖默认匹配、严格模式、营销过滤、全角/空白/零宽归一化、英文大小写、重复关键词、空列表、真实测试文案。
 - `LayoutSmokeTest`：2 个 Robolectric 用例，在主界面主题下 inflate `activity_main` 并验证分段按钮可选中，在闹钟主题下 inflate `activity_alert`。
+- `PermissionCheckTimesTest`：4 个用例，覆盖 08:59、09:00、12:30、18:00、23:59 的下一次巡检时间。
 - `assembleDebug` / `assembleRelease`：编译通过。
 - `lintDebug` / `lintVitalRelease`：执行并通过。
 - APK 清单检查：包名、min/target SDK、权限、组件、前台服务类型。
