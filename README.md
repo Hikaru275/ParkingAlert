@@ -24,7 +24,7 @@
   <a href="https://github.com/Hikaru275/ParkingAlert/releases"><img alt="GitHub release" src="https://img.shields.io/github/v/release/Hikaru275/ParkingAlert?label=release"></a>
 </p>
 
-> **当前版本**：v1.2.0 · versionCode 4  
+> **当前版本**：v1.2.1 · versionCode 5  
 > **包名**：`com.hikaru.parkingalert`  
 > **仓库只包含源码与预览图，APK 通过 GitHub Releases 发布。**
 
@@ -59,7 +59,7 @@
 | 系统闹钟铃声 | 读取 `RingtoneManager.TYPE_ALARM`，跟随系统闹钟设置；失败时回退内置警报音 |
 | 精简首页 | 已开启的权限不再显示；全部开启后权限卡片自动隐藏 |
 | 本地历史 | 默认显示最近 3 条，可展开全部；支持查看、复制、清空 |
-| 后台守护 | 可选的 `specialUse` 前台服务 + 低优先级常驻通知；关闭后首页切为“守卫已关闭”状态 |
+| 后台常驻 | 可选的 `specialUse` 前台服务 + 低优先级常驻通知；关闭后首页切为“后台常驻已关闭”状态 |
 | 自启动引导 | 小米/华为/OPPO/vivo 等机型提供自启动设置入口，并支持手动确认“已开启” |
 | 每日权限检查 | 每天 09:00 / 18:00 检查权限；缺失时发送权限提醒通知 |
 | 无网络权限 | 不申请 `INTERNET`，无统计、广告、崩溃上报 SDK |
@@ -152,12 +152,12 @@
 - “清空”会删除全部本地记录和短信内容。
 - 关闭“保存短信记录”后，新提醒不再写入历史。
 
-### 后台守护
+### 后台常驻
 
 - 默认开启，会显示一条低优先级常驻通知“挪车提醒守卫中”。
-- 关闭后，首页 Hero 会从青绿色切换为棕褐色，标题变为“守卫已关闭”，开关旁提示“点击开启”。
-- 关闭后台守护不会影响系统短信广播；只是在部分激进省电策略的机型上，被冻结的概率会更高。
-- 若不希望常驻通知，可在系统通知设置中将“后台守护”频道设为静默或最低优先级。
+- 关闭后，首页 Hero 会从青绿色切换为棕褐色，标题变为“后台常驻已关闭”，开关旁提示“点击开启”。
+- 关闭后台常驻后，短信仍会由系统广播送达（App 未被强行停止时）；但手机更容易清理后台，提醒可能变慢或漏掉。
+- 若不希望常驻通知，可在系统通知设置中将“后台常驻”频道设为静默或最低优先级。
 
 ### 每日权限检查
 
@@ -175,8 +175,8 @@
 | `USE_FULL_SCREEN_INTENT` | 锁屏时弹出全屏提醒页 | 建议 |
 | `VIBRATE` | 震动阶段和闹钟震动 | 可选 |
 | `WAKE_LOCK` | 响铃期间保持 CPU 运行 | 内部使用 |
-| `RECEIVE_BOOT_COMPLETED` | 重启后恢复未处理提醒和后台守护 | 建议 |
-| `FOREGROUND_SERVICE` 系列 | 震动/闹钟播放、后台守护 | 内部使用 |
+| `RECEIVE_BOOT_COMPLETED` | 重启后恢复未处理提醒和后台常驻 | 建议 |
+| `FOREGROUND_SERVICE` 系列 | 震动/闹钟播放、后台常驻 | 内部使用 |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | 引导加入电池白名单 | 建议 |
 | `ACCESS_NOTIFICATION_POLICY` | 可选的免打扰穿透尝试 | 可选 |
 
@@ -245,7 +245,7 @@ ParkingAlert/
 ├─ app/src/main/java/com/hikaru/parkingalert/
 │  ├─ alert/        # 状态机、震动/闹钟前台服务、全屏提醒页、精确闹钟
 │  ├─ data/         # 数据模型、SharedPreferences 持久化
-│  ├─ service/      # 后台守护前台服务
+│  ├─ service/      # 后台常驻前台服务
 │  ├─ sms/          # SMS 广播接收器、关键词匹配
 │  ├─ ui/           # 主界面
 │  └─ util/         # 通知、权限、厂商设置、时间格式化

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">挪车提醒</string>
-    <string name="app_subtitle">停车短信守卫</string>
+    <string name="app_subtitle">挪车短信守卫</string>
 
     <string name="status_watching">守卫中</string>
     <string name="status_waiting">待设置</string>
-    <string name="status_guard_off">守卫已关闭</string>
-    <string name="status_guard_off_detail">后台守护已关闭，短信监听仍可用</string>
-    <string name="status_guard_off_missing">后台守护已关闭，另有 %1$d 项设置待完善</string>
-    <string name="status_guard_off_no_sms">后台守护已关闭，且缺少短信权限</string>
-    <string name="status_guard_off_no_notification">后台守护已关闭，且缺少通知权限</string>
-    <string name="status_ready_detail">短信守卫中 · 一切正常</string>
+    <string name="status_guard_off">后台常驻已关闭</string>
+    <string name="status_guard_off_detail">短信还能收到，但手机可能清理后台，提醒会变慢或漏掉</string>
+    <string name="status_guard_off_missing">后台常驻已关闭，另有 %1$d 项设置待完善</string>
+    <string name="status_guard_off_no_sms">后台常驻已关闭，且没有短信权限</string>
+    <string name="status_guard_off_no_notification">后台常驻已关闭，且没有通知权限</string>
+    <string name="status_ready_detail">短信正常监听，后台常驻中</string>
     <string name="status_partial_detail">已能监听，建议补全下方设置</string>
     <string name="status_need_sms">还差一步：允许读取短信</string>
     <string name="status_need_sms_detail">没有短信权限，App 无法收到违停通知</string>
@@ -19,11 +19,11 @@
     <string name="permission_card_title">完善运行设置</string>
     <string name="permission_card_summary">还差 %1$d 项</string>
 
-    <string name="guardian_title">后台守护</string>
+    <string name="guardian_title">后台常驻</string>
     <string name="guardian_label_off">点击开启</string>
     <string name="guardian_desc">常驻一条低优先级通知，提升被系统冻结后的存活率</string>
-    <string name="guardian_started">后台守护已开启</string>
-    <string name="guardian_stopped">后台守护已关闭</string>
+    <string name="guardian_started">后台常驻已开启</string>
+    <string name="guardian_stopped">后台常驻已关闭</string>
 
     <string name="permission_title">运行权限</string>
     <string name="permission_summary_ok">已就绪</string>
@@ -162,7 +162,7 @@
     <string name="permission_reminder_text">未开启：%1$s</string>
     <string name="permission_reminder_big">为了正常接收违停提醒，请打开 App 完成以下设置：\n%1$s</string>
     <string name="go_settings">去设置</string>
-    <string name="notification_channel_guardian">后台守护</string>
+    <string name="notification_channel_guardian">后台常驻</string>
     <string name="notification_channel_guardian_desc">保持短信监听活跃的常驻通知</string>
 
     <string name="notification_gentle_title">挪车提醒</string>
